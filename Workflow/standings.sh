@@ -1,0 +1,48 @@
+#!/bin/zsh --no-rcs
+
+# Auto Update
+[[ -f "${alfred_workflow_data}/seasons.json" ]] && [[ "$(date -r "${alfred_workflow_data}/seasons.json" +%s)" -lt "$(date -v -"${autoUpdate}"M +%s)" ]] && reload=$(./reload.sh)
+
+# Get files for current season
+seasons_file="${alfred_workflow_data}/seasons.json"
+currentSeason="$(jq -r '.seasons[-1].standingsEnd' "${seasons_file}")"
+standings_file="${alfred_workflow_data}/${currentSeason::4}/standings.json"
+icons_dir="${alfred_workflow_data}/${currentSeason::4}/icons"
+
+# Load Standings
+jq -cs \
+   --arg icons_dir "${icons_dir}" \
+   --arg favTeam "${(L)favTeam}" \
+   --arg grouping "${grouping}" \
+'{
+    "skipknowledge": true,
+	"items": (if (length != 0) then
+		.[].standings | map({
+			"title": "\(.'${grouping}Sequence')  \(.teamName.default)",
+			"subtitle": "[ GP: \(.gamesPlayed)  W: \(.wins)  L: \(.losses)  OT: \(.otLosses) ]    PTS: \(.points)    [ RW: \(.regulationWins)  ROW: \(.regulationPlusOtWins)  GF: \(.goalFor)  GA: \(.goalAgainst)  DIFF: \(.goalFor - .goalAgainst) ]",
+			"match": "\(.'${grouping}Sequence')  \(.teamName.default) \(.conferenceName) \(.divisionName) \(.wildcardSequence | if (. > 0) then "wildcard" else "" end)",
+			"icon": { "path": "\($icons_dir)/\(.teamLogo | match("[^/]+svg") | .string)" },
+			"text": { "copy": .teamName.default },
+			"valid": false,
+			"variables": { "teamId":.teamAbbrev.default, "teamName":.teamName.default, "seq":.'${grouping}Sequence', "conference":.conferenceName, "division":.divisionName },
+			"mods": {
+			    "cmd": {"subtitle": "⌘↩ Sort by Division", "variables": {"grouping":"division"}},
+			    "alt": {"subtitle": "⌥↩ Sort by Conference", "variables": {"grouping":"conference"}},
+			    "ctrl": {"subtitle": "⌃↩ Sort by League", "variables": {"grouping":"league"}}
+			}
+		}) | (if ($grouping != "league") then ([
+		    (.[] | select((.variables.seq) == 1)) |
+		    (. |= {"title":"——  \(.variables.conference)  ——", "subtitle":(if ($grouping == "division") then .variables.division else "" end), "valid": false, "variables":.variables, "mods":.mods, "match":"\(.variables.conference) \(.variables.division) wildcard"}) |
+			(.variables.seq |= 0)
+		]+.) end)
+		| (if ($grouping == "conference") then sort_by(.variables.conference, .variables.seq) elif ($grouping == "division") then sort_by(.variables.conference, .variables.division, .variables.seq) end)
+		| [(.[] | select((.variables.teamName|ascii_downcase) == $favTeam)) | (.match |= "")] + .
+		| [(.[] | if ((.variables.teamName|ascii_downcase) == $favTeam) then (.title |= .+"  ★") end)]
+	else
+		[{
+			"title": "No Standings Found",
+			"subtitle": "Press ↩ to load standings for the current season",
+			"arg": "reload"
+		}]
+	end)
+}' "${standings_file}"
