@@ -5,9 +5,10 @@
 
 # Get files for current season
 seasons_file="${alfred_workflow_data}/seasons.json"
-currentSeason="$(jq -r '.seasons[-1].standingsEnd' "${seasons_file}")"
-standings_file="${alfred_workflow_data}/${currentSeason::4}/standings.json"
-icons_dir="${alfred_workflow_data}/${currentSeason::4}/icons"
+season="$(jq -r '.seasons[-1].standingsEnd' "${seasons_file}")"
+seasonYear="$(jq -r '.seasons[-1].standingsStart[0:4]' "${seasons_file}")"
+standings_file="${alfred_workflow_data}/${seasonYear}/standings.json"
+icons_dir="${alfred_workflow_data}/${seasonYear}/icons"
 
 # Load Standings
 jq -cs \

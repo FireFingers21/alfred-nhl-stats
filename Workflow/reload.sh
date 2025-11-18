@@ -7,9 +7,9 @@ curl -sf --compressed --connect-timeout 10 "https://api-web.nhle.com/v1/standing
 
 if [[ -n "${downloadStatus}" ]]; then
     # Get standings for current/selected season
-    currentSeason="$(jq -r '.seasons[-1].standingsEnd' "${seasons_file}")"
-    season="${currentSeason}"
-    seasonDir="${alfred_workflow_data}/${season::4}"
+    season="$(jq -r '.seasons[-1].standingsEnd' "${seasons_file}")"
+    seasonYear="$(jq -r '.seasons[-1].standingsStart[0:4]' "${seasons_file}")"
+    seasonDir="${alfred_workflow_data}/${seasonYear}"
     mkdir -p "${seasonDir}"
     curl -sf --compressed "https://api-web.nhle.com/v1/standings/${season}" -o "${seasonDir}/standings.json"
     if [[ -f "${seasonDir}/standings.json" && ! -d "${seasonDir}/icons" ]]; then
