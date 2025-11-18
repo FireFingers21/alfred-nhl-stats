@@ -12,11 +12,15 @@ if [[ -n "${downloadStatus}" ]]; then
     seasonDir="${alfred_workflow_data}/${seasonYear}"
     mkdir -p "${seasonDir}"
     curl -sf --compressed "https://api-web.nhle.com/v1/standings/${season}" -o "${seasonDir}/standings.json"
-    if [[ -f "${seasonDir}/standings.json" && ! -d "${seasonDir}/icons" ]]; then
+    set -o extendedglob
+    if [[ -f "${seasonDir}/standings.json" && ! -n ${seasonDir}/icons/*.png(#qNY1) ]]; then
         # Get Team Logos
         mkdir -p "${seasonDir}/icons"
         teamLogos=($(jq -r '.standings[].teamLogo' "${seasonDir}/standings.json"))
         curl -sf --compressed --parallel --output-dir "${seasonDir}/icons" --remote-name-all -L "${teamLogos[@]}"
+        for file in ${seasonDir}/icons/*.svg; do
+            sips -s format png -o "${seasonDir}/icons/${${file##*/}::3}.png" --resampleHeight 256 -p 288 288 "${file}" >/dev/null && rm "${file}"
+        done
     fi
     printf "Standings Updated"
 else

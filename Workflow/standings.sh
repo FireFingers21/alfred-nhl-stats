@@ -22,7 +22,7 @@ jq -cs \
 			"title": "\(.'${grouping}Sequence')  \(.teamName.default)",
 			"subtitle": "[ GP: \(.gamesPlayed)  W: \(.wins)  L: \(.losses)  OT: \(.otLosses) ]    PTS: \(.points)    [ RW: \(.regulationWins)  ROW: \(.regulationPlusOtWins)  GF: \(.goalFor)  GA: \(.goalAgainst)  DIFF: \(.goalFor - .goalAgainst) ]",
 			"match": "\(.'${grouping}Sequence')  \(.teamName.default) \(.conferenceName) \(.divisionName) \(.wildcardSequence | if (. > 0) then "wildcard" else "" end)",
-			"icon": { "path": "\($icons_dir)/\(.teamLogo | match("[^/]+svg") | .string)" },
+			"icon": { "path": "\($icons_dir)/\(.teamAbbrev.default).png" },
 			"text": { "copy": .teamName.default },
 			"valid": false,
 			"variables": { "teamId":.teamAbbrev.default, "teamName":.teamName.default, "seq":.'${grouping}Sequence', "conference":.conferenceName, "division":.divisionName },
