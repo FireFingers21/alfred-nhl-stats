@@ -24,6 +24,18 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>D113E344-DEC2-4AAA-AF6C-F4BA472E46BA</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>0DA495ED-E037-47C6-8336-AFC3C1B8A3D1</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>62C49C7D-BB51-422E-8603-8AF951206107</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -139,6 +151,32 @@
 				<false/>
 			</dict>
 		</array>
+		<key>C19E8EC6-CF15-4342-8216-E749653CB27B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BD399B0F-232F-4538-A46F-B79ED961BD3F</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>⌥↩ Update Now</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D113E344-DEC2-4AAA-AF6C-F4BA472E46BA</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C19E8EC6-CF15-4342-8216-E749653CB27B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>D152973B-1A3C-423C-A1E7-12B72B2B19E2</key>
 		<array>
 			<dict>
@@ -214,6 +252,44 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>behaviour</key>
+				<integer>2</integer>
+				<key>fontmode</key>
+				<integer>0</integer>
+				<key>fontsizing</key>
+				<integer>0</integer>
+				<key>footertext</key>
+				<string></string>
+				<key>inputfile</key>
+				<string>getStats.sh</string>
+				<key>inputtype</key>
+				<integer>1</integer>
+				<key>loadingtext</key>
+				<string></string>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>scriptinput</key>
+				<integer>0</integer>
+				<key>spellchecking</key>
+				<integer>0</integer>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>inboundconfig</key>
+			<dict>
+				<key>externalid</key>
+				<string>getStats</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.text</string>
+			<key>uid</key>
+			<string>C19E8EC6-CF15-4342-8216-E749653CB27B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<true/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -272,6 +348,49 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string># Generate small team icon
+[[ ! -f "${icons_dir}/${teamId}small.png" ]] &amp;&amp; sips -s format png -o "${icons_dir}/${teamId}small.png" --resampleHeightWidthMax 64 "${icons_dir}/${teamId}.png"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D113E344-DEC2-4AAA-AF6C-F4BA472E46BA</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>externaltriggerid</key>
+				<string>getStats</string>
+				<key>passinputasargument</key>
+				<false/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.callexternaltrigger</string>
+			<key>uid</key>
+			<string>BD399B0F-232F-4538-A46F-B79ED961BD3F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>conditions</key>
 				<array>
 					<dict>
@@ -287,6 +406,20 @@
 						<string>reload</string>
 						<key>uid</key>
 						<string>152D09E4-E7D4-4B28-85D3-A338E4208BC3</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<true/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>stats</string>
+						<key>outputlabel</key>
+						<string>stats</string>
+						<key>uid</key>
+						<string>0DA495ED-E037-47C6-8336-AFC3C1B8A3D1</string>
 					</dict>
 				</array>
 				<key>elselabel</key>
@@ -323,27 +456,6 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>{query}</string>
-				<key>title</key>
-				<string>{const:alfred_workflow_name}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>9D2BBEA5-0035-411B-80E9-722420550411</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -368,6 +480,27 @@
 			<string>241A366E-E084-4CBD-B319-632AF3CF787B</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>{const:alfred_workflow_name}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>9D2BBEA5-0035-411B-80E9-722420550411</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -587,9 +720,16 @@ View the latest [NHL](https://www.nhl.com/) standings via the `nhl` keyword. Typ
 
 ![Using the nhl keyword](images/about/keyword.png)
 
+* &lt;kbd&gt;↩&lt;/kbd&gt; View Team Stats.
 * &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Rank teams by Division.
 * &lt;kbd&gt;⌥&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Rank teams by Conference.
 * &lt;kbd&gt;⌃&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Rank teams by League.
+
+Additional Team Stats can be viewed directly within Alfred. This includes League, Home, Away, and L10 Stats.
+
+![Viewing team stats in the Text View](images/about/stats.png)
+
+* &lt;kbd&gt;⌥&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Refresh Team Stats.
 
 Append `::` to the configured [Keyword](https://www.alfredapp.com/help/workflows/inputs/keyword) to access other actions, such as manually reloading the standings cache.
 
@@ -605,7 +745,7 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>345</real>
 			<key>ypos</key>
-			<real>50</real>
+			<real>130</real>
 		</dict>
 		<key>210AB6D9-E37D-4A72-B130-528568776620</key>
 		<dict>
@@ -614,14 +754,14 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>315</real>
 			<key>ypos</key>
-			<real>640</real>
+			<real>665</real>
 		</dict>
 		<key>21AA0846-593F-4C61-AE67-E0211DA2546A</key>
 		<dict>
 			<key>xpos</key>
 			<real>580</real>
 			<key>ypos</key>
-			<real>415</real>
+			<real>440</real>
 		</dict>
 		<key>241A366E-E084-4CBD-B319-632AF3CF787B</key>
 		<dict>
@@ -630,7 +770,7 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>315</real>
 			<key>ypos</key>
-			<real>385</real>
+			<real>410</real>
 		</dict>
 		<key>3239E521-04A1-4420-B4CA-48596688FD31</key>
 		<dict>
@@ -639,14 +779,14 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>180</real>
 			<key>ypos</key>
-			<real>540</real>
+			<real>565</real>
 		</dict>
 		<key>36BC2A5D-75B1-48EA-8B8E-465794BFE78D</key>
 		<dict>
 			<key>xpos</key>
 			<real>670</real>
 			<key>ypos</key>
-			<real>415</real>
+			<real>440</real>
 		</dict>
 		<key>4700133B-A9CC-4AC2-A73F-FF3D0F475FE8</key>
 		<dict>
@@ -664,7 +804,7 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>30</real>
 			<key>ypos</key>
-			<real>30</real>
+			<real>125</real>
 		</dict>
 		<key>62C49C7D-BB51-422E-8603-8AF951206107</key>
 		<dict>
@@ -675,7 +815,7 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>450</real>
 			<key>ypos</key>
-			<real>125</real>
+			<real>260</real>
 		</dict>
 		<key>7FA9BFFC-366D-4872-9979-8DBF3A13B495</key>
 		<dict>
@@ -686,7 +826,7 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>180</real>
 			<key>ypos</key>
-			<real>30</real>
+			<real>125</real>
 		</dict>
 		<key>9D2BBEA5-0035-411B-80E9-722420550411</key>
 		<dict>
@@ -695,7 +835,38 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>450</real>
 			<key>ypos</key>
-			<real>385</real>
+			<real>410</real>
+		</dict>
+		<key>BD399B0F-232F-4538-A46F-B79ED961BD3F</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>9</integer>
+			<key>xpos</key>
+			<real>790</real>
+			<key>ypos</key>
+			<real>125</real>
+		</dict>
+		<key>C19E8EC6-CF15-4342-8216-E749653CB27B</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>9</integer>
+			<key>note</key>
+			<string>View Team Stats</string>
+			<key>xpos</key>
+			<real>630</real>
+			<key>ypos</key>
+			<real>125</real>
+		</dict>
+		<key>D113E344-DEC2-4AAA-AF6C-F4BA472E46BA</key>
+		<dict>
+			<key>colorindex</key>
+			<integer>9</integer>
+			<key>note</key>
+			<string>Generate Small Icon</string>
+			<key>xpos</key>
+			<real>450</real>
+			<key>ypos</key>
+			<real>125</real>
 		</dict>
 		<key>D152973B-1A3C-423C-A1E7-12B72B2B19E2</key>
 		<dict>
@@ -706,7 +877,7 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>30</real>
 			<key>ypos</key>
-			<real>535</real>
+			<real>560</real>
 		</dict>
 		<key>D4C5F95B-CA8E-4CE6-B248-3600C8E276CC</key>
 		<dict>
@@ -715,7 +886,7 @@ Configure the [Hotkey](https://www.alfredapp.com/help/workflows/triggers/hotkey/
 			<key>xpos</key>
 			<real>315</real>
 			<key>ypos</key>
-			<real>535</real>
+			<real>560</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>

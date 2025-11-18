@@ -12,9 +12,16 @@ View the latest [NHL](https://www.nhl.com/) standings via the `nhl` keyword. Typ
 
 ![Using the nhl keyword](Workflow/images/about/keyword.png)
 
+* <kbd>↩</kbd> View Team Stats.
 * <kbd>⌘</kbd><kbd>↩</kbd> Rank teams by Division.
 * <kbd>⌥</kbd><kbd>↩</kbd> Rank teams by Conference.
 * <kbd>⌃</kbd><kbd>↩</kbd> Rank teams by League.
+
+Additional Team Stats can be viewed directly within Alfred. This includes League, Home, Away, and L10 Stats.
+
+![Viewing team stats in the Text View](Workflow/images/about/stats.png)
+
+* <kbd>⌥</kbd><kbd>↩</kbd> Refresh Team Stats.
 
 Append `::` to the configured [Keyword](https://www.alfredapp.com/help/workflows/inputs/keyword) to access other actions, such as manually reloading the standings cache.
 

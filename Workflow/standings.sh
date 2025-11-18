@@ -16,20 +16,27 @@ jq -cs \
    --arg favTeam "${(L)favTeam}" \
    --arg grouping "${grouping}" \
 '{
+    "variables": {
+        "seasons_file": "'${seasons_file}'",
+        "season": "'${season}'",
+        "seasonYear": "'${seasonYear}'",
+        "standings_file": "'${standings_file}'",
+        "icons_dir": "'${icons_dir}'"
+    },
     "skipknowledge": true,
 	"items": (if (length != 0) then
 		.[].standings | map({
 			"title": "\(.'${grouping}Sequence')  \(.teamName.default)",
-			"subtitle": "[ GP: \(.gamesPlayed)  W: \(.wins)  L: \(.losses)  OT: \(.otLosses) ]    PTS: \(.points)    [ RW: \(.regulationWins)  ROW: \(.regulationPlusOtWins)  GF: \(.goalFor)  GA: \(.goalAgainst)  DIFF: \(.goalFor - .goalAgainst) ]",
+			"subtitle": "[ GP: \(.gamesPlayed)  W: \(.wins)  L: \(.losses)  OT: \(.otLosses) ]    PTS: \(.points)    [ RW: \(.regulationWins)  ROW: \(.regulationPlusOtWins)  GF: \(.goalFor)  GA: \(.goalAgainst)  DIFF: \(.goalDifferential | (if . > 0 then "+"+(.|tostring) else . end)) ]",
+			"arg": "stats",
 			"match": "\(.'${grouping}Sequence')  \(.teamName.default) \(.conferenceName) \(.divisionName) \(.wildcardSequence | if (. > 0) then "wildcard" else "" end)",
 			"icon": { "path": "\($icons_dir)/\(.teamAbbrev.default).png" },
 			"text": { "copy": .teamName.default },
-			"valid": false,
 			"variables": { "teamId":.teamAbbrev.default, "teamName":.teamName.default, "seq":.'${grouping}Sequence', "conference":.conferenceName, "division":.divisionName },
 			"mods": {
-			    "cmd": {"subtitle": "⌘↩ Sort by Division", "variables": {"grouping":"division"}},
-			    "alt": {"subtitle": "⌥↩ Sort by Conference", "variables": {"grouping":"conference"}},
-			    "ctrl": {"subtitle": "⌃↩ Sort by League", "variables": {"grouping":"league"}}
+			    "cmd": {"subtitle": "⌘↩ Sort by Division", "arg": "", "variables": {"grouping":"division"}},
+			    "alt": {"subtitle": "⌥↩ Sort by Conference", "arg": "", "variables": {"grouping":"conference"}},
+			    "ctrl": {"subtitle": "⌃↩ Sort by League", "arg": "", "variables": {"grouping":"league"}}
 			}
 		}) | (if ($grouping != "league") then ([
 		    (.[] | select((.variables.seq) == 1)) |
