@@ -3,15 +3,17 @@
 seasons_file="${alfred_workflow_data}/seasons.json"
 
 mkdir -p "${alfred_workflow_data}"
-curl -sf --compressed --connect-timeout 10 "https://api-web.nhle.com/v1/standings-season" -o "${seasons_file}" && downloadStatus=1
+curl -sf --compressed --connect-timeout 10 -L "https://api-web.nhle.com/v1/standings-season" -o "${seasons_file}" && downloadStatus=1
 
 if [[ -n "${downloadStatus}" ]]; then
     # Get standings for current/selected season
-    season="$(jq -r '.seasons[-1].standingsEnd' "${seasons_file}")"
-    seasonYear="$(jq -r '.seasons[-1].standingsStart[0:4]' "${seasons_file}")"
+    [[ "$(date +%s)" -ge "$(date -jv 9m +%s)" ]] && seasonYear="$(date +%Y)" || seasonYear="$(($(date +%Y) - 1))"
+    season="$(jq -r --arg seasonYear "${seasonYear}" '.seasons[] | select(.standingsStart[0:4] == $seasonYear).standingsEnd' "${seasons_file}")"
     seasonDir="${alfred_workflow_data}/${seasonYear}"
+
+    # Get season standings
     mkdir -p "${seasonDir}"
-    curl -sf --compressed "https://api-web.nhle.com/v1/standings/${season}" -o "${seasonDir}/standings.json"
+    curl -sf --compressed -L "https://api-web.nhle.com/v1/standings/${season}" -o "${seasonDir}/standings.json"
     set -o extendedglob
     if [[ -f "${seasonDir}/standings.json" && ! -n ${seasonDir}/icons/*.png(#qNY1) ]]; then
         # Get Team Logos
@@ -22,6 +24,7 @@ if [[ -n "${downloadStatus}" ]]; then
             sips -s format png -o "${seasonDir}/icons/${${file##*/}::3}.png" --resampleHeight 256 -p 288 288 "${file}" >/dev/null && rm "${file}"
         done
     fi
+    touch "${alfred_workflow_data}"
     printf "Standings Updated"
 else
     printf "Standings not Updated"
