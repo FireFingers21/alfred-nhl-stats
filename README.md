@@ -10,7 +10,7 @@ This workflow requires [jq](https://jqlang.github.io/jq/) to function, which com
 
 ## Usage
 
-View the latest [NHL](https://www.nhl.com/) standings via the `nhl` keyword. Type to filter by Team, Ranking, Division, Conference, or Wildcard.
+View the latest [NHL](https://www.nhl.com/) standings via the `nhl` keyword. Type to filter by Team, Ranking, Division, Conference, Clinch, or Wildcard.
 
 ![Using the nhl keyword](Workflow/images/about/keyword.png)
 
