@@ -25,7 +25,8 @@ else
 fi
 
 # Format Stats to Markdown
-mdOutput=$(jq -crs --arg teamId "${teamId}" --arg icons_dir "${icons_dir}" \
+if [[ -f "${standings_file}" ]]; then
+    mdOutput=$(jq -crs --arg teamId "${teamId}" --arg icons_dir "${icons_dir}" \
 '.[].standings |
 (length) as $leagueCnt |
 (group_by(.conferenceName)[] | select(.[].teamAbbrev.default == $teamId) | length) as $conferenceCnt |
@@ -72,6 +73,11 @@ mdOutput=$(jq -crs --arg teamId "${teamId}" --arg icons_dir "${icons_dir}" \
     ("Points:"|.+" "*($spaces-length))+"\(.l10Points)",
     "```"
 ' "${standings_file}" | sed 's/\"/\\"/g')
+else
+    lastUpdatedDate="$(date -r "${alfred_workflow_data}" +%Y-%m-%d)"
+    [[ -f "${alfred_workflow_data}" ]] && minutes="$((($(date +%s)-$(date -r "${alfred_workflow_data}" +%s))/60))"
+    mdOutput="![Team Logo](${icons_dir}/${teamId}small.png)\n# ${teamName}\n**Games Played:** N/A      ·      **Points:** N/A      ·      **Date**: ${lastUpdatedDate}\n***\n*No Team Stats available*"
+fi
 
 # Output Formatted Stats to Text View
 cat << EOB
