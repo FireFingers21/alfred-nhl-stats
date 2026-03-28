@@ -63,7 +63,7 @@ jq -cs \
 			}) | (.variables.seq |= 0) | (.variables.teamName |= "")
 		]+.) end)
 		| (if ($grouping == "conference") then sort_by(.variables.conference, .variables.seq) elif ($grouping == "division") then sort_by(.variables.conference, .variables.division, .variables.seq) end)
-		| [(.[] | select((.variables.teamName|ascii_downcase) == $favTeam)) | (.match |= "")] + .
+		| [(.[] | select(($grouping == "league" and .variables.seq == 1) | not) | select((.variables.teamName|ascii_downcase) == $favTeam)) | (.match |= "")] + .
 		| [(.[] | if ((.variables.teamName|ascii_downcase) == $favTeam) then (.title |= .+"  ★") end)]
 	else
 		[{
