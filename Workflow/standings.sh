@@ -28,6 +28,7 @@ jq -cs \
 	"items": (if (length != 0) then
 		.[].standings |
 		([.[] | select(.clinchIndicator).divisionName]) as $clinchedDivisions |
+		([.[] | select(.clinchIndicator != "e").divisionName]) as $playoffDivisions |
 		([.[].conferenceSequence] | unique | join(" ")) as $conferenceSeqs |
 		([.[].divisionSequence] | unique | join(" ")) as $divisionSeqs |
 		("") as $leagueSeqs |
@@ -41,8 +42,9 @@ jq -cs \
 			"match": "\(.'${grouping}Sequence') \(.teamName.default) \(.conferenceName) \(.divisionName) \(.wildcardSequence | if (. > 0) then "wildcard" else "" end)",
 			"match": [
                 .'${grouping}Sequence', .teamName.default, "\(.conferenceName) Conference", .divisionName,
-                (.wildcardSequence | if (. > 0) then "wildcard" else "" end),
-                (if (.clinchIndicator) then "clinched" else "" end)
+                (if (.wildcardSequence > 0) then "wildcard" else "" end),
+                (if (.clinchIndicator) then "clinched" else "" end),
+                (if (.clinchIndicator != "e") then "playoffs" else "" end)
             ] | map(select(.)) | join(" "),
 			"icon": { "path": "\($icons_dir)/\(.teamAbbrev.default).png" },
 			"text": { "copy": .teamName.default },
@@ -58,7 +60,7 @@ jq -cs \
 				"title":"—————  \(.variables.conference) Conference  —————",
 				"subtitle":(if ($grouping == "division") then (.variables.division | " "*(47-length/2)+.) else "" end),
 				"icon":{"path":"images/iconLarge.png"},
-				"match":"\(.variables.conference) Conference \(.variables.division) \($'${grouping}Seqs' | map(."\($'${grouping}')" | select(.)) | join(" ")) \(if ((.variables.division) as $div | $clinchedDivisions | contains([$div])) then "clinched" else "" end) wildcard",
+				"match":"\(.variables.conference) Conference \(.variables.division) \($'${grouping}Seqs' | map(."\($'${grouping}')" | select(.)) | join(" ")) \((.variables.division) as $div | if ($playoffDivisions | contains([$div])) then "clinched playoffs" elif ($clinchedDivisions | contains([$div])) then "clinched" else "" end) wildcard",
 				"variables":.variables, "mods":.mods, "valid": false
 			}) | (.variables.seq |= 0) | (.variables.teamName |= "")
 		]+.) end)
