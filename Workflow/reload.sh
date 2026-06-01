@@ -1,19 +1,22 @@
 #!/bin/zsh --no-rcs
 
+mkdir -p "${alfred_workflow_data}"
 seasons_file="${alfred_workflow_data}/seasons.json"
 
-mkdir -p "${alfred_workflow_data}"
-curl -sf --compressed --connect-timeout 10 -L "https://api-web.nhle.com/v1/standings-season" -o "${seasons_file}" && downloadStatus=1
-
-if [[ -n "${downloadStatus}" ]]; then
+# Conditionally download seasons file
+function getSeason {
     # Get standings for current/selected season
     [[ "$(date +%s)" -ge "$(date -jv 9m +%s)" ]] && seasonYear="$(date +%Y)" || seasonYear="$(($(date +%Y) - 1))"
     season="$(jq -r --arg seasonYear "${seasonYear}" '.seasons[] | select(.standingsStart[0:4] == $seasonYear).standingsEnd' "${seasons_file}")"
     seasonDir="${alfred_workflow_data}/${seasonYear}"
+}
+[[ -f "${seasons_file}" ]] && getSeason
+[[ -n "${season}" ]] && downloadStatus=1 || curl -sf --compressed --connect-timeout 10 -L "https://api-web.nhle.com/v1/standings-season" -o "${seasons_file}" && downloadStatus=1 && getSeason
 
+if [[ -n "${downloadStatus}" ]]; then
     # Get season standings
     mkdir -p "${seasonDir}"
-    curl -sf --compressed -L "https://api-web.nhle.com/v1/standings/${season}" -o "${seasonDir}/standings.json"
+    curl -sf --compressed --connect-timeout 10 -L "https://api-web.nhle.com/v1/standings/${season}" -o "${seasonDir}/standings.json"
     set -o extendedglob
     if [[ -f "${seasonDir}/standings.json" && ! -n ${seasonDir}/icons/*.png(#qNY1) ]]; then
         # Get Team Logos
