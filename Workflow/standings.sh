@@ -39,7 +39,6 @@ jq -cs \
 			"title": "\(.'${grouping}Sequence')  \(.teamName.default)  \(.clinchIndicator | if (.) then "(\(.))" else "" end)",
 			"subtitle": "[ GP: \(.gamesPlayed)  W: \(.wins)  L: \(.losses)  OT: \(.otLosses) ]    PTS: \(.points)    [ RW: \(.regulationWins)  ROW: \(.regulationPlusOtWins)  GF: \(.goalFor)  GA: \(.goalAgainst)  DIFF: \(.goalDifferential | (if . > 0 then "+"+(.|tostring) else . end)) ]",
 			"arg": "stats",
-			"match": "\(.'${grouping}Sequence') \(.teamName.default) \(.conferenceName) \(.divisionName) \(.wildcardSequence | if (. > 0) then "wildcard" else "" end)",
 			"match": [
                 .'${grouping}Sequence', .teamName.default, "\(.conferenceName) Conference", .divisionName,
                 (if (.wildcardSequence > 0) then "wildcard" else "" end),
