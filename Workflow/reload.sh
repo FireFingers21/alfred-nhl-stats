@@ -11,18 +11,18 @@ function getSeason {
     seasonDir="${alfred_workflow_data}/${seasonYear}"
 }
 [[ -f "${seasons_file}" ]] && getSeason
-[[ -n "${season}" ]] && downloadStatus=1 || curl -sf --compressed --connect-timeout 10 -L "https://api-web.nhle.com/v1/standings-season" -o "${seasons_file}" && downloadStatus=1 && getSeason
+[[ -n "${season}" ]] && downloadStatus=1 || curl -sf --compressed --connect-timeout 5 -L "https://api-web.nhle.com/v1/standings-season" -o "${seasons_file}" && downloadStatus=1 && getSeason
 
 if [[ -n "${downloadStatus}" ]]; then
     # Get season standings
     mkdir -p "${seasonDir}"
-    curl -sf --compressed --connect-timeout 10 -L "https://api-web.nhle.com/v1/standings/${season}" -o "${seasonDir}/standings.json"
+    curl -sf --compressed --connect-timeout 5 -L "https://api-web.nhle.com/v1/standings/${season}" -o "${seasonDir}/standings.json"
     set -o extendedglob
     if [[ -f "${seasonDir}/standings.json" && ! -n ${seasonDir}/icons/*.png(#qNY1) ]]; then
         # Get Team Logos
         mkdir -p "${seasonDir}/icons"
         teamLogos=($(jq -r '.standings[].teamLogo' "${seasonDir}/standings.json"))
-        curl -sf --compressed --parallel --output-dir "${seasonDir}/icons" --remote-name-all -L "${teamLogos[@]}"
+        curl -sf --compressed --parallel --max-time 10 --output-dir "${seasonDir}/icons" --remote-name-all -L "${teamLogos[@]}"
         for file in ${seasonDir}/icons/*.svg; do
             sips -s format png -o "${seasonDir}/icons/${${file##*/}::3}.png" --resampleHeight 256 -p 288 288 "${file}" >/dev/null && rm "${file}"
         done
