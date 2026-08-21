@@ -28,7 +28,7 @@ fi
 # Format Stats to Markdown
 if [[ -f "${standings_file}" ]]; then
     mdOutput=$(jq -crs --arg teamId "${teamId}" --arg icons_dir "${icons_dir}" \
-'.[].standings |
+'.[0].standings |
 (length) as $leagueCnt |
 (group_by(.conferenceName)[] | select(.[].teamAbbrev.default == $teamId) | length) as $conferenceCnt |
 (group_by(.divisionName)[] | select(.[].teamAbbrev.default == $teamId) | length) as $divisionCnt |

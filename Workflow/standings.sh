@@ -11,23 +11,25 @@ set -o extendedglob
 
 # Load Standings
 jq -cs \
+   --arg alfred_workflow_keyword "${alfred_workflow_keyword}" \
    --arg favTeam "$(iconv -f UTF-8-MAC -t UTF-8 <<< ${(L)favTeam})" \
    --arg grouping "${grouping}" \
    --arg icons_dir "${seasonDir}/icons" \
    --arg seasonYear "${seasonYear}" \
 '{
     "variables": {
+        "keyword": $alfred_workflow_keyword,
         "icons_dir": $icons_dir,
         "seasonYear": $seasonYear
     },
     "skipknowledge": true,
 	"items": (if (length != 0) then
-		.[].standings |
+		.[0].standings |
 		([.[] | select(.clinchIndicator).divisionName]) as $clinchedDivisions |
 		([.[] | select(.clinchIndicator != "e").divisionName]) as $playoffDivisions |
 		(if ($grouping != "league") then map({(."\($grouping)Name"): ."\($grouping)Sequence"}) else "" end) as $groupingSeqs |
-		map({
-			"title": "\(."\($grouping)Sequence")  \(.teamName.default)  \(.clinchIndicator | if (.) then "(\(.))" else "" end)  \(if ((.teamName.default|ascii_downcase) == $favTeam) then "★" else "" end)",
+		map(((.teamName.default|ascii_downcase) == $favTeam) as $isFavourite | {
+			"title": "\(."\($grouping)Sequence")  \(.teamName.default)  \(.clinchIndicator | if (.) then "(\(.))" else "" end)  \(if ($isFavourite) then "★" else "" end)",
 			"subtitle": "[ GP: \(.gamesPlayed)  W: \(.wins)  L: \(.losses)  OT: \(.otLosses) ]    PTS: \(.points)    [ RW: \(.regulationWins)  ROW: \(.regulationPlusOtWins)  GF: \(.goalFor)  GA: \(.goalAgainst)  DIFF: \(.goalDifferential | (if . > 0 then "+"+(.|tostring) else . end)) ]",
 			"arg": "stats",
 			"match": [
@@ -38,11 +40,12 @@ jq -cs \
             ] | map(select(.)) | join(" "),
 			"icon": { "path": "\($icons_dir)/\(.teamAbbrev.default).png" },
 			"text": { "copy": .teamName.default },
-			"variables": { "teamId":.teamAbbrev.default, "teamName":.teamName.default, "seq":."\($grouping)Sequence", "conference":.conferenceName, "division":.divisionName },
+			"variables": { "favTeamNew": .teamName.default, "teamId":.teamAbbrev.default, "teamName":.teamName.default, "seq":."\($grouping)Sequence", "conference":.conferenceName, "division":.divisionName },
 			"mods": {
 			    "cmd": {"subtitle": "⌘↩ Sort by Division", "arg": "", "variables": {"grouping":"division"}},
 			    "alt": {"subtitle": "⌥↩ Sort by Conference", "arg": "", "variables": {"grouping":"conference"}},
-			    "ctrl": {"subtitle": "⌃↩ Sort by League", "arg": "", "variables": {"grouping":"league"}}
+			    "ctrl": {"subtitle": "⌃↩ Sort by League", "arg": "", "variables": {"grouping":"league"}},
+				"cmd+shift": {"subtitle": "⇧⌘↩ \(if ($isFavourite) then "Unset" else "Set" end) Favourite Team"}
 			}
 		}) | (if ($grouping != "league") then ([
 		    (unique_by(.variables."\($grouping)")[] | select((.variables.seq) == 1)) |
@@ -52,7 +55,7 @@ jq -cs \
 				"icon":{"path":"images/iconLarge.png"},
 				"match":"\(.variables.conference) Conference \(.variables.division) \($groupingSeqs | map(."\($grouping)" | select(.)) | join(" ")) \((.variables.division) as $div | if ($playoffDivisions | contains([$div])) then "clinched playoffs" elif ($clinchedDivisions | contains([$div])) then "clinched" else "" end) wildcard",
 				"variables":.variables, "mods":.mods, "valid": false
-			}) | (.variables.seq |= 0)
+			}) | (.variables.seq |= 0) | (.variables.favTeamNew |= "") | (.mods."cmd+shift".subtitle |= "")
 		]+.) end)
 		| (if ($grouping == "conference") then sort_by(.variables.conference, .variables.seq) elif ($grouping == "division") then sort_by(.variables.conference, .variables.division, .variables.seq) end)
 		| [(.[] | select(($grouping == "league" and .variables.seq == 1) | not) | select(.variables.seq != 0 and (.variables.teamName|ascii_downcase) == $favTeam)) | (.match |= "")] + .
