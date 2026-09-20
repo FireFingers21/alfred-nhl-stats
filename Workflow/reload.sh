@@ -6,7 +6,7 @@ seasons_file="${alfred_workflow_data}/seasons.json"
 # Conditionally download seasons file
 function getSeason {
     # Get standings for current/selected season
-    [[ "$(date +%s)" -ge "$(date -jv 9m +%s)" ]] && seasonYear="$(date +%Y)" || seasonYear="$(($(date +%Y) - 1))"
+    [[ "$(date +%s)" -ge "$(date -jv 9m -jv 15d +%s)" ]] && seasonYear="$(date +%Y)" || seasonYear="$(($(date +%Y) - 1))"
     season="$(jq -r --arg seasonYear "${seasonYear}" '.seasons[] | select(.standingsStart[0:4] == $seasonYear).standingsEnd' "${seasons_file}")"
     seasonDir="${alfred_workflow_data}/${seasonYear}"
 }

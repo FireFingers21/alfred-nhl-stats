@@ -1,7 +1,7 @@
 #!/bin/zsh --no-rcs
 
 # Get current/selected season
-[[ "$(date +%s)" -ge "$(date -jv 9m +%s)" ]] && seasonYear="$(date +%Y)" || seasonYear="$(($(date +%Y) - 1))"
+[[ "$(date +%s)" -ge "$(date -jv 9m -jv 15d +%s)" ]] && seasonYear="$(date +%Y)" || seasonYear="$(($(date +%Y) - 1))"
 seasonDir="${alfred_workflow_data}/${seasonYear}"
 
 # Auto Update
@@ -23,7 +23,7 @@ jq -cs \
         "seasonYear": $seasonYear
     },
     "skipknowledge": true,
-	"items": (if (length != 0) then
+	"items": (if (length != 0 and (.[0].standings | length != 0)) then
 		.[0].standings |
 		([.[] | select(.clinchIndicator).divisionName]) as $clinchedDivisions |
 		([.[] | select(.clinchIndicator != "e").divisionName]) as $playoffDivisions |
@@ -59,6 +59,11 @@ jq -cs \
 		]+.) end)
 		| (if ($grouping == "conference") then sort_by(.variables.conference, .variables.seq) elif ($grouping == "division") then sort_by(.variables.conference, .variables.division, .variables.seq) end)
 		| [(.[] | select(($grouping == "league" and .variables.seq == 1) | not) | select(.variables.seq != 0 and (.variables.teamName|ascii_downcase) == $favTeam)) | (.match |= "")] + .
+	elif (length != 0 and (.[0].standings | length == 0)) then
+		[{
+			"title": "No Standings for \($seasonYear)-\(($seasonYear|tonumber+1|tostring)[2:])",
+			"valid": false
+		}]
 	else
 		[{
 			"title": "No Standings Found",
