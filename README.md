@@ -4,10 +4,6 @@ View the latest NHL standings &amp; stats in Alfred
 
 [⤓ Install from the Alfred Gallery](https://alfred.app/workflows/firefingers21/nhl-stats/)
 
-## Setup
-
-This workflow requires [jq](https://jqlang.github.io/jq/) to function, which comes preinstalled on macOS 15 Sequoia and later.
-
 ## Usage
 
 View the latest [NHL](https://www.nhl.com/) standings via the `nhl` keyword. Type to filter by Team, Ranking, Division, Conference, Clinch, or Wildcard.
