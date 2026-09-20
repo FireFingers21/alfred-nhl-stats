@@ -4,9 +4,12 @@
 [[ "$(date +%s)" -ge "$(date -jv 9m -jv 15d +%s)" ]] && seasonYear="$(date +%Y)" || seasonYear="$(($(date +%Y) - 1))"
 seasonDir="${alfred_workflow_data}/${seasonYear}"
 
+# Limit Auto Update
+[[ -f "${alfred_workflow_data}/seasons.json" ]] && seasonFinished="$(jq -r --arg seasonYear "${seasonYear}" '.seasons[] | select(.standingsStart[0:4] == $seasonYear).standingsEnd | strptime("%Y-%m-%d") | mktime+86400 < now' "${alfred_workflow_data}/seasons.json")"
+
 # Auto Update
 set -o extendedglob
-[[ -f ${alfred_workflow_data}/*/*(#i)standings.json(#qNY1) ]] \
+[[ -f ${alfred_workflow_data}/*/*(#i)standings.json(#qNY1) && "${seasonFinished:=false}" = false ]] \
 && [[ "$(date -r "${alfred_workflow_data}" +%s)" -lt "$(date -v -"${autoUpdate}"M +%s)" || ! -d "${seasonDir}" ]] && reload=$(./reload.sh)
 
 # Load Standings
