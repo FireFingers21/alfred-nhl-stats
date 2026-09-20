@@ -58,7 +58,7 @@ jq -cs \
 				"icon":{"path":"images/iconLarge.png"},
 				"match":"\(.variables.conference) Conference \(.variables.division) \($groupingSeqs | map(."\($grouping)" | select(.)) | join(" ")) \((.variables.division) as $div | if ($playoffDivisions | contains([$div])) then "clinched playoffs" elif ($clinchedDivisions | contains([$div])) then "clinched" else "" end) wildcard",
 				"variables":.variables, "mods":.mods, "valid": false
-			}) | (.variables.seq |= 0) | (.variables.favTeamNew |= "") | (.mods."cmd+shift".subtitle |= "")
+			}) | (.variables.seq |= 0) | (.variables.favTeamNew |= "") | (.subtitle as $sub | .mods."cmd+shift".subtitle |= $sub)
 		]+.) end)
 		| (if ($grouping == "conference") then sort_by(.variables.conference, .variables.seq) elif ($grouping == "division") then sort_by(.variables.conference, .variables.division, .variables.seq) end)
 		| [(.[] | select(($grouping == "league" and .variables.seq == 1) | not) | select(.variables.seq != 0 and (.variables.teamName|ascii_downcase) == $favTeam)) | (.match |= "")] + .
