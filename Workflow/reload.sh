@@ -7,7 +7,7 @@ seasons_file="${alfred_workflow_data}/seasons.json"
 function getSeason {
     # Get standings for current/selected season
     [[ "$(date +%s)" -ge "$(date -jv 9m -jv 15d +%s)" ]] && seasonYear="$(date +%Y)" || seasonYear="$(($(date +%Y) - 1))"
-    season="$(jq -r --arg seasonYear "${seasonYear}" '.seasons[] | select(.standingsStart[0:4] == $seasonYear).standingsEnd' "${seasons_file}")"
+    season="$(jq -r --arg seasonYear "${seasonYear}" '.seasons[] | select(.standingsStart[0:4] == $seasonYear).standingsEnd | if (now < (. | strptime("%Y-%m-%d") | mktime)) then (now | strftime("%Y-%m-%d")) else . end' "${seasons_file}")"
     seasonDir="${alfred_workflow_data}/${seasonYear}"
 }
 [[ -f "${seasons_file}" ]] && getSeason
